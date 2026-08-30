@@ -1,0 +1,97 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="38%" r="72%">
+      <stop offset="0%" stop-color="#18275f"/>
+      <stop offset="55%" stop-color="#101b46"/>
+      <stop offset="100%" stop-color="#070b26"/>
+    </radialGradient>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="50%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="chipGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f1b4d"/>
+      <stop offset="100%" stop-color="#090e2e"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7df9ff"/>
+      <stop offset="100%" stop-color="#c084fc"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="24" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 外圈光晕 -->
+  <circle cx="512" cy="512" r="470" fill="none" stroke="#00e5ff" stroke-width="2" opacity="0.16"/>
+  <circle cx="512" cy="512" r="486" fill="none" stroke="#a855f7" stroke-width="1.5" opacity="0.10"/>
+
+  <!-- 主圆形徽章 -->
+  <circle cx="512" cy="512" r="450" fill="url(#bgGrad)" stroke="url(#ringGrad)" stroke-width="22"/>
+
+  <!-- 内细环 -->
+  <circle cx="512" cy="512" r="404" fill="none" stroke="#00e5ff" stroke-width="2" opacity="0.35"/>
+  <circle cx="512" cy="512" r="390" fill="none" stroke="#a855f7" stroke-width="1" opacity="0.25"/>
+
+  <!-- 环形文字路径 -->
+  <path id="arcTop" d="M 172 512 A 340 340 0 1 1 852 512" fill="none"/>
+  <path id="arcBottom" d="M 172 512 A 340 340 0 1 0 852 512" fill="none"/>
+
+  <text font-family="'Avenir Next','Helvetica Neue',Arial,sans-serif" font-weight="800" font-size="58" fill="url(#textGrad)" letter-spacing="14">
+    <textPath href="#arcTop" startOffset="50%" text-anchor="middle">AI WORKSTATION</textPath>
+  </text>
+  <text font-family="'Avenir Next','Helvetica Neue',Arial,sans-serif" font-weight="600" font-size="38" fill="#7dd3fc" letter-spacing="9" opacity="0.9">
+    <textPath href="#arcBottom" startOffset="50%" text-anchor="middle">N E U R A L · E N G I N E</textPath>
+  </text>
+
+  <!-- 芯片到外圈的电路连线 -->
+  <g stroke="#38bdf8" stroke-width="3" opacity="0.55" fill="none">
+    <line x1="512" y1="332" x2="512" y2="182"/>
+    <line x1="512" y1="692" x2="512" y2="842"/>
+    <line x1="332" y1="512" x2="182" y2="512"/>
+    <line x1="692" y1="512" x2="842" y2="512"/>
+  </g>
+  <g fill="#7df9ff">
+    <circle cx="512" cy="182" r="10"/>
+    <circle cx="512" cy="842" r="10"/>
+    <circle cx="182" cy="512" r="10"/>
+    <circle cx="842" cy="512" r="10"/>
+  </g>
+
+  <!-- 芯片主体 -->
+  <rect x="332" y="332" width="360" height="360" rx="72" fill="url(#chipGrad)" stroke="url(#ringGrad)" stroke-width="8" filter="url(#glow)"/>
+
+  <!-- 芯片引脚 -->
+  <g stroke="url(#ringGrad)" stroke-width="6" stroke-linecap="round">
+    <line x1="452" y1="332" x2="452" y2="294"/>
+    <line x1="512" y1="332" x2="512" y2="294"/>
+    <line x1="572" y1="332" x2="572" y2="294"/>
+    <line x1="452" y1="692" x2="452" y2="730"/>
+    <line x1="512" y1="692" x2="512" y2="730"/>
+    <line x1="572" y1="692" x2="572" y2="730"/>
+    <line x1="332" y1="452" x2="294" y2="452"/>
+    <line x1="332" y1="512" x2="294" y2="512"/>
+    <line x1="332" y1="572" x2="294" y2="572"/>
+    <line x1="692" y1="452" x2="730" y2="452"/>
+    <line x1="692" y1="512" x2="730" y2="512"/>
+    <line x1="692" y1="572" x2="730" y2="572"/>
+  </g>
+
+  <!-- 芯片内 AI 字样 -->
+  <text x="512" y="542" font-family="'Avenir Next','Helvetica Neue',Arial,sans-serif" font-weight="900" font-size="132" fill="url(#textGrad)" text-anchor="middle" dominant-baseline="middle" filter="url(#softGlow)">AI</text>
+
+  <!-- 芯片内底部小字 -->
+  <text x="512" y="668" font-family="'Avenir Next','Helvetica Neue',Arial,sans-serif" font-weight="500" font-size="24" fill="#7dd3fc" text-anchor="middle" letter-spacing="8" opacity="0.85">WORKSTATION</text>
+</svg>

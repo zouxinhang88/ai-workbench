@@ -38,10 +38,20 @@ body {
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 18px;
   font-weight: 700;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--border);
+}
+
+.logo-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  flex-shrink: 0;
 }
 
 .config-group { display: flex; flex-direction: column; gap: 6px; }
