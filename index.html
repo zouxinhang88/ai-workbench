@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 工作台</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ===== 侧边栏：配置区 ===== -->
+  <aside class="sidebar">
+    <div class="logo">AI 工作台</div>
+
+    <div class="config-group">
+      <label>API 地址</label>
+      <input type="text" id="apiBase" value="http://127.0.0.1:1234" placeholder="http://127.0.0.1:1234" />
+    </div>
+
+    <div class="config-group">
+      <label>API Key（本地服务一般留空）</label>
+      <input type="password" id="apiKey" placeholder="可选" />
+    </div>
+
+    <div class="config-group">
+      <label>模型</label>
+      <div style="display:flex;gap:8px;">
+        <select id="modelSelect" style="flex:1;"></select>
+        <button id="refreshModels" class="btn-secondary" style="flex-shrink:0;">刷新</button>
+      </div>
+    </div>
+
+    <div class="config-group">
+      <label>System Prompt（系统提示词）</label>
+      <textarea id="systemPrompt">你是一个乐于助人的 AI 助手，回答简洁准确。</textarea>
+    </div>
+
+    <button id="newChat" class="btn-secondary">新建对话</button>
+
+    <div class="sidebar-footer" id="status">未连接</div>
+  </aside>
+
+  <!-- ===== 主区域：聊天区 ===== -->
+  <main class="main">
+    <div class="chat-header">
+      <span>本地 AI 工作台</span>
+      <span>OpenAI 兼容接口</span>
+    </div>
+
+    <div id="chatBox"></div>
+
+    <div class="input-area">
+      <textarea id="userInput" placeholder="输入你的问题，Enter 发送，Shift+Enter 换行"></textarea>
+      <button id="sendBtn">发送</button>
+      <button id="stopBtn" hidden>停止</button>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
