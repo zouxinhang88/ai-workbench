@@ -62,6 +62,16 @@ function scrollToBottom() {
   els.chatBox.scrollTop = els.chatBox.scrollHeight;
 }
 
+// 用 requestAnimationFrame 节流滚动，避免流式输出时频繁强制重排
+let scrollRaf = null;
+function scheduleScroll() {
+  if (scrollRaf) return;
+  scrollRaf = requestAnimationFrame(() => {
+    scrollRaf = null;
+    scrollToBottom();
+  });
+}
+
 // 轻量 Markdown 渲染（支持代码块、行内代码、标题、粗体、列表）
 function renderMarkdown(text) {
   const esc = escapeHtml(text);
@@ -80,8 +90,7 @@ function renderMarkdown(text) {
   // 无序列表
   html = html.replace(/^\s*[-*] (.*)$/gm, '<li>$1</li>');
   html = html.replace(/(?:<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
-  // 换行
-  html = html.replace(/\n/g, '<br>');
+  // 换行由 CSS white-space: pre-wrap 处理，不再做正则替换
   return html;
 }
 
@@ -197,8 +206,8 @@ async function sendMessage() {
           const delta = json.choices?.[0]?.delta?.content || '';
           if (delta) {
             assistantText += delta;
-            bubble.innerHTML = renderMarkdown(assistantText) + '<span class="cursor"></span>';
-            scrollToBottom();
+            textNode.appendData(delta); // 增量追加文本，不触发全量重渲染
+            scheduleScroll();
           }
         } catch { /* 忽略非 JSON 数据 */ }
       }

@@ -156,6 +156,7 @@ button:disabled { opacity: .45; cursor: not-allowed; }
   padding: 12px;
   overflow-x: auto;
   margin: 8px 0;
+  white-space: pre; /* 代码块保持原始换行 */
 }
 .bubble pre code { background: none; padding: 0; }
 .bubble .error { color: var(--danger); }
