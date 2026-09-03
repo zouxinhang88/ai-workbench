@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 工作台 · 媒体工具箱</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="media.css" />
+  <style>
+    /* 侧边栏页面导航（与主站风格一致） */
+    .side-nav { display: flex; flex-direction: column; gap: 6px; }
+    .nav-link {
+      display: block;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      text-decoration: none;
+      border: 1px solid transparent;
+      transition: all .15s;
+    }
+    .nav-link:hover { color: var(--text); background: var(--bg); }
+    .nav-link.active { color: var(--text); background: var(--bg); border-color: var(--border); }
+    .nav-link .arrow { float: right; opacity: .6; }
+    .chat-header { background: var(--panel); }
+    .tab-bar { border-top: 1px solid var(--border); }
+    .dz-file-label { font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <!-- ===== 侧边栏：品牌 + 导航 ===== -->
+  <aside class="sidebar">
+    <div class="logo"><img src="logo.svg" class="logo-img" alt="AI Workstation"><span>AI 工作台</span></div>
+
+    <nav class="side-nav">
+      <a class="nav-link" href="index.html">AI 聊天 <span class="arrow">→</span></a>
+      <a class="nav-link active" href="media.html">媒体工具箱</a>
+    </nav>
+
+    <div class="config-group" style="margin-top: 6px;">
+      <label>关于媒体工具箱</label>
+      <div class="config-hint">
+        视频/音频/文档处理全部在浏览器本地完成，文件不上传服务器。AI 总结自动复用「AI 聊天」页保存的本地（LM Studio）或云端 OpenAI 兼容配置。
+      </div>
+    </div>
+
+    <div class="sidebar-footer">纯前端 · Cloudflare Pages</div>
+  </aside>
+
+  <!-- ===== 主区域 ===== -->
+  <main class="main">
+    <div class="chat-header">
+      <span id="headerTitle">媒体工具箱 · 视频处理</span>
+      <span class="mode-badge">本地处理 · 不上传</span>
+    </div>
+
+    <div class="tab-bar" id="toolTabs">
+      <button type="button" class="tab-btn active" data-tab="video">视频处理</button>
+      <button type="button" class="tab-btn" data-tab="audio">音频处理</button>
+      <button type="button" class="tab-btn" data-tab="docs">文档处理</button>
+    </div>
+
+    <div class="main-body">
+
+      <!-- ==================== 视频 ==================== -->
+      <section class="tool-panel" id="panelVideo">
+        <div class="card">
+          <h4>1. 上传 / 预览视频</h4>
+          <div class="dropzone" id="videoDrop">
+            <p>点击选择或拖拽视频到此处</p>
+            <p class="dz-sub">支持 MP4 / WebM 等浏览器可解码格式 · 全程本地，不上传</p>
+          </div>
+          <input type="file" id="videoFile" accept="video/*" hidden />
+          <p class="meta-line" id="videoMeta"></p>
+          <video id="videoPlayer" class="media-preview" controls hidden></video>
+          <p class="msg-line" id="videoStatus"></p>
+        </div>
+
+        <div class="card">
+          <h4>2. 区间裁剪（导出片段）</h4>
+          <div class="row-group">
+            <label>开始</label>
+            <input type="number" id="videoStart" value="0" min="0" step="0.1" />
+            <label>结束</label>
+            <input type="number" id="videoEnd" value="0" min="0" step="0.1" />
+            <span class="inline-label" id="videoDuration"></span>
+          </div>
+          <div class="btn-row">
+            <button type="button" id="btnTrim">裁剪导出</button>
+            <span class="hint-text">使用浏览器原生 MediaRecorder 实时重编码（通常导出 WebM，Chrome 部分场景支持 MP4）；请保持页面可见并等待录制完成。</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>3. 截取当前帧（导出图片）</h4>
+          <p class="hint-text">先在上方播放并暂停到目标画面，点击下方按钮即导出当前帧 PNG。截图文件可继续配合多模态模型做 AI 分析（在 AI 聊天页粘贴图片即可，属于可选流程）。</p>
+          <div class="btn-row">
+            <button type="button" id="btnFrame">截取当前帧导出 PNG</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 音频 ==================== -->
+      <section class="tool-panel" id="panelAudio" hidden>
+        <div class="card">
+          <h4>1. 上传 / 预览音频（波形可视化）</h4>
+          <div class="dropzone" id="audioDrop">
+            <p>点击选择或拖拽音频到此处</p>
+            <p class="dz-sub">支持 MP3 / WAV / M4A 等浏览器可解码格式（OGG 在 Safari 不可用）</p>
+          </div>
+          <input type="file" id="audioFile" accept="audio/*" hidden />
+          <p class="meta-line" id="audioMeta"></p>
+          <audio id="audioPlayer" class="media-preview" controls hidden></audio>
+          <canvas id="waveform" class="waveform" hidden></canvas>
+          <p class="msg-line" id="audioStatus"></p>
+        </div>
+
+        <div class="card">
+          <h4>2. 时间区间裁剪</h4>
+          <div class="row-group">
+            <label>开始</label>
+            <input type="number" id="audioStart" value="0" min="0" step="0.1" />
+            <label>结束</label>
+            <input type="number" id="audioEnd" value="0" min="0" step="0.1" />
+            <span class="inline-label" id="audioDuration"></span>
+          </div>
+          <div class="btn-row">
+            <label class="inline-label">导出格式</label>
+            <select id="audioTrimFormat" class="small-select">
+              <option value="wav">WAV（无损）</option>
+              <option value="mp3">MP3（128kbps）</option>
+            </select>
+            <button type="button" id="btnAudioTrim">裁剪导出</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>3. 格式转换</h4>
+          <div class="btn-row">
+            <label class="inline-label">转换为</label>
+            <select id="audioConvertFormat" class="small-select">
+              <option value="wav">WAV</option>
+              <option value="mp3">MP3</option>
+            </select>
+            <button type="button" id="btnAudioConvert">转换整段</button>
+          </div>
+          <p class="hint-text">说明：浏览器没有 AAC / Vorbis 等商用编码器，因此无法导出 M4A / OGG；你仍可上传 M4A / OGG 做预览、裁剪，并导出为 WAV 或 MP3。</p>
+        </div>
+      </section>
+
+      <!-- ==================== 文档 ==================== -->
+      <section class="tool-panel" id="panelDocs" hidden>
+        <div class="card">
+          <h4>PDF 工具（预览 / 合并 / 拆分 / 旋转 / 提取文本）</h4>
+          <div class="dropzone" id="pdfDrop">
+            <p>点击选择或拖拽 PDF 到此处（可多选）</p>
+            <p class="dz-sub">pdf.js 预览 + pdf-lib 操作 · 可含加密提示文件</p>
+          </div>
+          <input type="file" id="pdfFiles" accept="application/pdf,.pdf" multiple hidden />
+
+          <div class="file-list" id="pdfFilesBox"></div>
+
+          <div class="row-group">
+            <label class="inline-label">当前文件</label>
+            <select id="pdfTarget" class="mid-select"></select>
+          </div>
+          <div class="btn-row">
+            <button type="button" id="btnPdfMerge">合并全部</button>
+            <button type="button" id="btnPdfSplit">拆分为单页(ZIP)</button>
+            <select id="pdfRotateDeg" class="small-select">
+              <option value="90">旋转 90°</option>
+              <option value="180">旋转 180°</option>
+              <option value="270">旋转 270°</option>
+            </select>
+            <button type="button" id="btnPdfRotate">旋转</button>
+            <button type="button" id="btnPdfText">提取文本 → AI 总结</button>
+          </div>
+          <p class="hint-text">「合并全部」合并列表内所有文件；「拆分」「旋转」「提取文本」作用于上方下拉框选中的文件。</p>
+
+          <div class="pdf-preview-area" id="pdfPreviewArea" hidden>
+            <canvas id="pdfCanvas"></canvas>
+            <div class="row-group">
+              <button type="button" id="btnPdfPrev">上一页</button>
+              <span id="pdfPageInfo" class="inline-label">-</span>
+              <button type="button" id="btnPdfNext">下一页</button>
+            </div>
+          </div>
+          <p class="msg-line" id="pdfStatus"></p>
+        </div>
+
+        <div class="card">
+          <h4>TXT / Markdown 预览 · 编辑 · 导出</h4>
+          <div class="dropzone" id="textDrop">
+            <p>点击选择或拖拽 .txt / .md 到此处，或直接在下框粘贴内容</p>
+          </div>
+          <input type="file" id="textFile" accept=".txt,.md,.markdown,text/plain" hidden />
+          <p class="meta-line" id="textMeta"></p>
+          <textarea id="textEditor" rows="10" placeholder="上传 .txt / .md 后可直接编辑；编辑完可导出文件，或点击「AI 总结本文」"></textarea>
+          <div class="btn-row">
+            <button type="button" id="btnTextSave">导出文件</button>
+            <button type="button" id="btnTextAi" class="btn-secondary">AI 总结本文</button>
+          </div>
+          <p class="msg-line" id="textStatus"></p>
+        </div>
+
+        <div class="card">
+          <h4>DOCX 预览 + AI 总结</h4>
+          <div class="dropzone" id="docxDrop">
+            <p>点击选择或拖拽 .docx 到此处</p>
+          </div>
+          <input type="file" id="docxFile" accept=".docx" hidden />
+          <div class="docx-preview" id="docxPreview"><span class="muted-text">上传 .docx 后在此渲染预览</span></div>
+          <div class="btn-row">
+            <button type="button" id="btnDocxAi" class="btn-secondary">AI 总结本文档</button>
+          </div>
+          <p class="msg-line" id="docxStatus"></p>
+        </div>
+
+        <div class="card">
+          <h4>AI 总结结果</h4>
+          <textarea id="aiResult" rows="9" placeholder="对 txt / md / PDF（文本层）/ docx 执行 AI 总结后，结果会显示在这里。配置自动复用「AI 聊天」页：本地 LM Studio 或云端 OpenAI 兼容 API。"></textarea>
+          <div class="btn-row">
+            <button type="button" id="btnAiCopy">复制结果</button>
+          </div>
+          <p class="msg-line" id="aiStatus"></p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ===== 第三方库（全部 CDN，无构建步骤） ===== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/docx-preview/0.3.2/docx-preview.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
+  <script src="media.js"></script>
+</body>
+</html>

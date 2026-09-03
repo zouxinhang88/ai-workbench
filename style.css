@@ -139,6 +139,22 @@ button:disabled { opacity: .45; cursor: not-allowed; }
   white-space: nowrap;
 }
 
+/* ============ 页面导航 ============ */
+.side-nav { display: flex; flex-direction: column; gap: 6px; }
+.nav-link {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: all .15s;
+}
+.nav-link:hover { color: var(--text); background: var(--bg); }
+.nav-link.active { color: var(--text); background: var(--bg); border-color: var(--border); }
+.nav-link .arrow { float: right; opacity: .6; }
+
 /* ============ 主区域 ============ */
 .main {
   flex: 1;
