@@ -8,25 +8,76 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- ===== 侧边栏：配置区 ===== -->
+  <!-- ===== 侧边栏：模式 + 配置区 ===== -->
   <aside class="sidebar">
     <div class="logo"><img src="logo.svg" class="logo-img" alt="AI Workstation"><span>AI 工作台</span></div>
 
-    <div class="config-group">
-      <label>API 地址</label>
-      <input type="text" id="apiBase" value="http://127.0.0.1:1234" placeholder="http://127.0.0.1:1234" />
+    <!-- 模式切换 -->
+    <div class="mode-switch" id="modeSwitch">
+      <button type="button" class="mode-btn active" data-mode="local">本地 API</button>
+      <button type="button" class="mode-btn" data-mode="cloud">云端 API</button>
     </div>
 
-    <div class="config-group">
-      <label>API Key（本地服务一般留空）</label>
-      <input type="password" id="apiKey" placeholder="可选" />
+    <!-- 本地模式配置 -->
+    <div class="config-block" id="localSettings">
+      <div class="config-group">
+        <label>API 地址</label>
+        <input type="text" id="apiBase" value="http://127.0.0.1:1234" placeholder="http://127.0.0.1:1234" />
+      </div>
+
+      <div class="config-group">
+        <label>API Key（本地服务一般留空）</label>
+        <input type="password" id="apiKey" placeholder="可选" />
+      </div>
+
+      <div class="config-group">
+        <label>模型</label>
+        <div style="display:flex;gap:8px;">
+          <select id="modelSelect" style="flex:1;"></select>
+          <button id="refreshModels" class="btn-secondary" style="flex-shrink:0;">刷新</button>
+        </div>
+      </div>
     </div>
 
-    <div class="config-group">
-      <label>模型</label>
-      <div style="display:flex;gap:8px;">
-        <select id="modelSelect" style="flex:1;"></select>
-        <button id="refreshModels" class="btn-secondary" style="flex-shrink:0;">刷新</button>
+    <!-- 云端模式配置 -->
+    <div class="config-block" id="cloudSettings" hidden>
+      <div class="config-hint">云端走 OpenAI 兼容接口，实际请求地址为「Base URL + /chat/completions」，Base URL 必须以 https:// 开头。</div>
+
+      <div class="config-group">
+        <label>预设服务商</label>
+        <select id="cloudPreset">
+          <option value="">自定义</option>
+          <option value="deepseek">DeepSeek</option>
+          <option value="openai">OpenAI</option>
+          <option value="moonshot">Moonshot Kimi</option>
+          <option value="zhipu">智谱 GLM</option>
+          <option value="dashscope">阿里云百炼</option>
+          <option value="siliconflow">SiliconFlow</option>
+        </select>
+      </div>
+
+      <div class="config-group">
+        <label>Base URL</label>
+        <input type="text" id="cloudBase" placeholder="https://api.deepseek.com/v1" />
+      </div>
+
+      <div class="config-group">
+        <label>API Key</label>
+        <input type="password" id="cloudKey" placeholder="sk-..." />
+      </div>
+
+      <div class="config-group">
+        <label>模型名</label>
+        <input type="text" id="cloudModel" list="cloudModelList" placeholder="deepseek-chat" />
+        <datalist id="cloudModelList">
+          <option value="deepseek-chat"></option>
+          <option value="deepseek-reasoner"></option>
+          <option value="gpt-4o-mini"></option>
+          <option value="gpt-4o"></option>
+          <option value="moonshot-v1-8k"></option>
+          <option value="glm-4-flash"></option>
+          <option value="qwen-plus"></option>
+        </datalist>
       </div>
     </div>
 
@@ -43,8 +94,8 @@
   <!-- ===== 主区域：聊天区 ===== -->
   <main class="main">
     <div class="chat-header">
-      <span>本地 AI 工作台</span>
-      <span>OpenAI 兼容接口</span>
+      <span id="headerTitle">本地 AI 工作台</span>
+      <span id="headerBadge" class="mode-badge">本地 · OpenAI 兼容</span>
     </div>
 
     <div id="chatBox"></div>
